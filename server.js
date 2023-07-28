@@ -10,13 +10,13 @@ const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
 const mongoose = require('mongoose');
-const connectDB = require('./config/dbConn');
+const {connectMainDB, connectSchoolDB} = require('./config/dbConn');
 
 const PORT = process.env.PORT || 3500;
 
 // connect to mongo db
 
-connectDB();
+connectMainDB();
 
 // custom middleware logger
 app.use(logger);
@@ -39,8 +39,10 @@ app.use('/auth', require('./routes/auth'));
 app.use('/refresh', require('./routes/refresh'));
 app.use('/logout', require('./routes/logout'));
 
+// connectSchoolDB();
 app.use(verifyJWT);
 app.use('/employees', require('./routes/api/employees'));
+app.use('/classes', require('./routes/api/classes'));
 
 app.all('*' , (req, res) => {
     res.status(404);
@@ -54,7 +56,6 @@ app.all('*' , (req, res) => {
     }else {
         res.type('txt').send("404 Not Found");
     }
-
 });
 
 app.use(errorHandler);

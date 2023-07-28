@@ -21,16 +21,20 @@ const userSchema = new Schema({
     roles: {
         User:{
             type:Number,
-            default:6921
+            default:2001
         },
         Editor: Number,
-        Admin:Number
+        Admin:{
+            type:Number,
+            default:6921
+        }
     },
     password : {
         type: String,
         required: true
     },
-    refreshToken : String
-});
+    refreshToken : String,
+    
+},  { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

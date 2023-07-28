@@ -26,5 +26,13 @@
   },
   "engines": {
     "node": ">=14.20.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waynevik/lounge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/waynevik/lounge/issues"
+  },
+  "homepage": "https://github.com/waynevik/lounge#readme"
 }

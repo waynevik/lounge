@@ -13,13 +13,13 @@ const handelNewUser =  async (req, res) => {
     if(duplicate) return res.sendStatus(409); // conflict
 
     try {
-        // encrypy password
+        // encrypt password
         const hashedPwd = await bcrypt.hash(pwd, 10);
         // create school
         const school_result = await School.create({        
             "school_name" : school_name, 
             "admin_name" : firstname+" "+lastname, 
-            "admin_email" : school_name, 
+            "admin_email" : email, 
         });
 
         const school_id = school_result._id.toString();
@@ -32,6 +32,8 @@ const handelNewUser =  async (req, res) => {
              "lastname": lastname,
              "school_id": school_id
         });
+
+        // const clusterResult = await 
 
         console.log(userResult);
       
