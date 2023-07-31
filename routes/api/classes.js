@@ -10,7 +10,7 @@ router.route('/')
     .put(verifyRoles(ROLES_LIST.Admin), classesController.updateClass)
     .delete(verifyRoles(ROLES_LIST.Admin), classesController.deleteClass);
 
-router.route('/:id')
+router.route('/:classname')
     .get(classesController.getClass);
 
 module.exports =  router;

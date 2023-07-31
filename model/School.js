@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Classes = require('../model/Classes');
+const Students = require('../model/Student');
 const Schema = mongoose.Schema;
 
 const schoolSchema = new Schema({
@@ -15,7 +16,8 @@ const schoolSchema = new Schema({
         type: String,
         required: true
     },
-    classes: [Classes.schema]
+    classes: [Classes.schema],
+    students: [Students.schema]
 },  { timestamps: true });
 
 module.exports = mongoose.model('School', schoolSchema);

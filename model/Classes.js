@@ -7,11 +7,11 @@ const classesSchema = new Schema({
         required: true,
         unique: true
     },
-    level : {
+    classlevel : {
         type: String,
         required: true
     },
-    details : {
+    classdetails : {
         type: String,
         required: true
     }

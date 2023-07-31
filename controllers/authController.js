@@ -8,7 +8,7 @@ const handleLogin = async (req, res) => {
 
     const foundUser =  await User.findOne({ email: email}).exec();
 
-    if(!foundUser) return res.sendStatus(401);
+    if(!foundUser) return res.sendStatus(409);
     // evaluate password
     const match = await bcrypt.compare(pwd, foundUser.password);
 
@@ -24,7 +24,7 @@ const handleLogin = async (req, res) => {
                     }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            {expiresIn: '1000s'}
+            {expiresIn: '100000s'}
         );
         const refreshToken = jwt.sign(
             {"username": foundUser.email },
@@ -35,8 +35,6 @@ const handleLogin = async (req, res) => {
         //   Saving refresh token with current user
         foundUser.refreshToken = refreshToken;
         const result = await foundUser.save();
-        console.log(result);
-
         res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'None',  maxAge: 24 * 60 * 60 *1000}); //secure:true,
         res.json({ accessToken});
     }else {
