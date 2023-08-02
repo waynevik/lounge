@@ -84,7 +84,7 @@ const deleteClass = async (req, res) => {
     } catch (error) {
         res.sendStatus(400);   
     }
-  
+
 }
 
 const getClass = async (req, res) => {

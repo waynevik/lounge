@@ -4,6 +4,8 @@ const Students = require('../model/Student');
 const Routes = require('../model/Routes');
 const FeeType = require('../model/FeeType');
 const RouteStudents = require('../model/RouteStudents');
+const FeeChargeBatch = require('../model/FeeChargeBatch');
+const FeeCharge = require('../model/FeeCharge');
 
 const Schema = mongoose.Schema;
 
@@ -20,6 +22,8 @@ const schoolSchema = new Schema({
         type: String,
         required: true
     },
+    feeCharge: [FeeCharge.schema],
+    feeChargeBatch: [FeeChargeBatch.schema],
     routeStudents: [RouteStudents.schema],
     classes: [Classes.schema],
     feeTypes: [FeeType.schema],

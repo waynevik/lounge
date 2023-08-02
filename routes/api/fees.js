@@ -6,10 +6,10 @@ const ROLES_LIST = require('../../config/roles_list.js');
 const verifyRoles = require('../../middleware/verifyRoles.js');
 
 router.route('/')
-    // .get(verifyRoles(ROLES_LIST.Admin), feesController.getAllStudents)
+    .get(verifyRoles(ROLES_LIST.Admin), feesController.getChargedFees)
     .post(verifyRoles(ROLES_LIST.Admin), feesController.chargeFees)
-    // .put(verifyRoles(ROLES_LIST.Admin), studentsController.updateStudent)
-    // .delete(verifyRoles(ROLES_LIST.Admin), studentsController.deleteStudent);
+    .put(verifyRoles(ROLES_LIST.Admin), feesController.updateFeeCharged)
+    .delete(verifyRoles(ROLES_LIST.Admin), feesController.deleteFeeCharged);
 
 router.route('/one')
     // .get(studentsController.getStudent);
