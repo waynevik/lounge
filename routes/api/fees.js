@@ -11,8 +11,14 @@ router.route('/')
     .put(verifyRoles(ROLES_LIST.Admin), feesController.updateFeeCharged)
     .delete(verifyRoles(ROLES_LIST.Admin), feesController.deleteFeeCharged);
 
-router.route('/one')
-    // .get(studentsController.getStudent);
+router.route('/receive')
+    .post(verifyRoles(ROLES_LIST.Admin), feesController.receiveFee)
+    .put(verifyRoles(ROLES_LIST.Admin), feesController.updateReceivedFee)
+    .delete(verifyRoles(ROLES_LIST.Admin), feesController.deleteReceiveFee)
+
+router.route('/check')
+    .get(verifyRoles(ROLES_LIST.Admin), feesController.getStudentFees)
+
 
 router.route('/type')
     .get(verifyRoles(ROLES_LIST.Admin), feeTypeController.getFeeTypes)

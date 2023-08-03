@@ -7,6 +7,9 @@ const RouteStudents = require('../model/RouteStudents');
 const FeeChargeBatch = require('../model/FeeChargeBatch');
 const FeeCharge = require('../model/FeeCharge');
 
+const ReceiptDetails = require('../model/ReceiptDetails');
+const FeeReceived = require('../model/FeeReceived');
+
 const Schema = mongoose.Schema;
 
 const schoolSchema = new Schema({
@@ -21,6 +24,17 @@ const schoolSchema = new Schema({
     admin_name: {
         type: String,
         required: true
+    },
+    feeReceived: [FeeReceived.schema],
+    receiptDetails: {
+        receipt_no: {
+            type: Number,
+            default: 0
+        },
+        school_logo: {
+            type: String,
+            default: "none"
+        }
     },
     feeCharge: [FeeCharge.schema],
     feeChargeBatch: [FeeChargeBatch.schema],

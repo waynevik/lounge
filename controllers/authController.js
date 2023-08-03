@@ -8,7 +8,7 @@ const handleLogin = async (req, res) => {
 
     const foundUser =  await User.findOne({ email: email}).exec();
 
-    if(!foundUser) return res.sendStatus(409);
+    if(!foundUser) return res.sendStatus(400);
     // evaluate password
     const match = await bcrypt.compare(pwd, foundUser.password);
 
@@ -38,7 +38,7 @@ const handleLogin = async (req, res) => {
         res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'None',  maxAge: 24 * 60 * 60 *1000}); //secure:true,
         res.json({ accessToken});
     }else {
-        res.sendStatus(401);
+        res.sendStatus(400);
     }
 }
 
