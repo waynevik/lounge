@@ -25,6 +25,24 @@ const schoolSchema = new Schema({
         type: String,
         required: true
     },
+    sms: {
+        type: String,
+        default: "UjumbeSMS"
+    },
+    messages : {
+        balance: {
+            type: Number,
+            default: 0
+        },
+        totalSent : {
+            type: Number,
+            default: 0
+        },
+        bought : {
+            type: Number,
+            default: 0
+        }
+    },
     feeReceived: [FeeReceived.schema],
     receiptDetails: {
         receipt_no: {
