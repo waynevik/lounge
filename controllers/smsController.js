@@ -14,7 +14,7 @@ const sendSms = async (req, res) => {
 
     const school = await School.findOne( {_id: school_details.school_id}).exec();
 
-    if(req.body.data.length > school.messages.balance)
+    if(req.body.data.length >= school.messages.balance)
     return res.status(400).json({"message": "Not enough messages"});
 
     school.messages.balance -= req.body.data.length;
