@@ -4,13 +4,11 @@ const Student = require('../model/Student');
 const User = require('../model/User');
 
 const getAllStudents = async (req, res) => {
-    if(!req?.body?.tag) return res.status(400).json( {"message": "tag required found"});
-
     const school_details = await User.findOne( {email: req.email}).exec();
-    if(!school_details) return res.status(400).json( {"message": "school_not found"});
+    if(!school_details) return res.status(403).json( {"message": "school_not found"});
     const school = await School.findOne( {_id: school_details.school_id}).exec();
 
-    if(req.body.tag == 1) return res.status(200).json(school.students);
+    if(req.body.tag == 1 || !req?.body?.tag) return res.status(200).json(school.students);
 
     if(!req?.body?.class_name) return res.status(400).json( {"message": "Class name is required found"});
 

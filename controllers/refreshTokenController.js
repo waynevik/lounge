@@ -7,32 +7,30 @@ const handleRefreshToken =  async (req, res) => {
     if(!cookies?.jwt) return res.sendStatus(401); 
     const refreshToken =  cookies.jwt;
 
-    console.log(refreshToken);
-
     const foundUser =  await User.findOne({ refreshToken}).exec();
-    if(!foundUser) return res.sendStatus(403);  //forbiden
-    // evaluate jwt
+    if(!foundUser) return res.status(403).json({"message": "not found"});  //forbiden
 
     jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET, 
         (err, decoded) => {
-            // if(err || foundUser.email !== decoded.email) return res.sendStatus(403);
 
+            if(err || foundUser.email !== decoded.email) return res.sendStatus(403);
+         
             const roles = Object.values(foundUser.roles);
 
             const accessToken = jwt.sign(
                 {
                     "UserInfo": 
                         { 
-                            "username": foundUser.username,
+                            "email": foundUser.email,
                             "roles": roles
                         }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '30s'}
+                { expiresIn: '10s'}
             );
-            res.json({accessToken});
+            res.json({accessToken, roles});
         }
     )
        

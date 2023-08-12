@@ -13,7 +13,7 @@ const handleLogin = async (req, res) => {
     const match = await bcrypt.compare(pwd, foundUser.password);
 
     if(match) {
-        const roles = Object.values(foundUser.roles);
+        const roles = Object.values(foundUser.roles).filter(Boolean);
         // create JWTs here for authentications
         const accessToken = jwt.sign(
             {
@@ -24,10 +24,10 @@ const handleLogin = async (req, res) => {
                     }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            {expiresIn: '100000s'}
+            {expiresIn: '100s'}
         );
         const refreshToken = jwt.sign(
-            {"username": foundUser.email },
+            {"email": foundUser.email },
             process.env.REFRESH_TOKEN_SECRET,
             {expiresIn: '1d'}
         );
@@ -35,8 +35,8 @@ const handleLogin = async (req, res) => {
         //   Saving refresh token with current user
         foundUser.refreshToken = refreshToken;
         const result = await foundUser.save();
-        res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'None',  maxAge: 24 * 60 * 60 *1000}); //secure:true,
-        res.json({ accessToken});
+        res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'None', secure:true, maxAge: 24 * 60 * 60 *1000}); //secure:true,
+        res.json({ accessToken, roles, refreshToken});
     }else {
         res.sendStatus(400);
     }
