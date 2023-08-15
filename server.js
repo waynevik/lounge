@@ -12,7 +12,7 @@ const credentials = require('./middleware/credentials');
 const mongoose = require('mongoose');
 const {connectMainDB, connectSchoolDB} = require('./config/dbConn');
 
-const PORT = process.env.PORT || 3500;
+const PORT = process.env.PORT || 4500;
 
 // connect to mongo db
 
