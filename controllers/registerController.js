@@ -12,6 +12,20 @@ const handelNewUser =  async (req, res) => {
     if(!validator.isEmail(email)) return res.status(400).json( {"message": "Provide a valid email address", "code": "2" });
     if(duplicate) return res.sendStatus(409); // conflict
 
+    const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+    const SCHOOL_REGEX = /^[A-z][A-z0-9-_ ]{3,53}$/;
+    const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+    const EMAIL_REGEX = /\S+@\S+\.\S+/;
+
+    if(
+        !USER_REGEX.test(firstname) || 
+        !USER_REGEX.test(lastname) || 
+        !SCHOOL_REGEX.test(school_name) || 
+        !PWD_REGEX.test(pwd) || 
+        !EMAIL_REGEX.test(email)
+    )
+    return res.status(400).json( {"message": "One of the input is wrong", "code": "2" });
+
     try {
         // encrypt password
         const hashedPwd = await bcrypt.hash(pwd, 10);

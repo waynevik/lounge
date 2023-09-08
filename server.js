@@ -46,6 +46,7 @@ app.use('/classes', require('./routes/api/classes'));
 app.use('/students', require('./routes/api/students'));
 app.use('/fees', require('./routes/api/fees'));
 app.use('/sms', require('./routes/api/sms'));
+app.use('/data', require('./routes/api/data'));
 
 app.all('*' , (req, res) => {
     res.status(404);

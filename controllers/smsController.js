@@ -3,34 +3,34 @@ const User = require('../model/User');
 const axios = require('axios');
 
 const sendSms = async (req, res) => {
-    if  (
-            !req?.body?.data
-        )
+  if(
+        !req?.body?.data
+    )
 
-    return res.status(400).json({'message' : 'All data is required!'});
-    const school_details = await User.findOne( {email: req.email}).exec();
-    if(!school_details)
-        return res.status(400).json( {"message": "school_not found"});
+  return res.status(400).json({'message' : 'All data is required!'});
+  const school_details = await User.findOne( {email: req.email}).exec();
+  if(!school_details)
+      return res.status(400).json( {"message": "school_not found"});
 
-    const school = await School.findOne( {_id: school_details.school_id}).exec();
+  const school = await School.findOne( {_id: school_details.school_id}).exec();
 
-    if(req.body.data.length >= school.messages.balance)
-    return res.status(400).json({"message": "Not enough messages"});
+  if(req.body.data.length >= school.messages.balance)
+  return res.status(400).json({"message": "Not enough messages"});
 
-    school.messages.balance -= req.body.data.length;
-    school.messages.totalSent += req.body.data.length;
-    await school.save();
+  school.messages.balance -= req.body.data.length;
+  school.messages.totalSent += req.body.data.length;
+  await school.save();
 
-    req.body.data.map( (messageBody, index) => {
+  req.body.data.map( (messageBody, index) => {
 
-        if(!messageBody.message || !messageBody.number)
-        return;
+      if(!messageBody.message || !messageBody.number)
+      return;
 
-        sendSmsToParent(messageBody.number, messageBody.message);
+      sendSmsToParent(messageBody.number, messageBody.message);
 
-    });
+  });
 
-    res.status(200).json({"message": "messages sent succesfully"});
+  res.status(200).json({"message": "messages sent succesfully"});
 }
 
 
@@ -58,6 +58,5 @@ function sendSmsToParent(phone_number, message){
 
     });
 }
-
 
 module.exports = {sendSms}; 

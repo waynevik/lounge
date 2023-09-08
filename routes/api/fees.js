@@ -17,7 +17,7 @@ router.route('/receive')
     .delete(verifyRoles(ROLES_LIST.Admin), feesController.deleteReceiveFee)
 
 router.route('/check')
-    .get(verifyRoles(ROLES_LIST.Admin), feesController.getStudentFees)
+    .post(verifyRoles(ROLES_LIST.Admin), feesController.getStudentFees)
 
 
 router.route('/type')

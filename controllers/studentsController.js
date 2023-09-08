@@ -10,12 +10,11 @@ const getAllStudents = async (req, res) => {
 
     if(req.body.tag == 1 || !req?.body?.tag) return res.status(200).json(school.students);
 
-    if(!req?.body?.class_name) return res.status(400).json( {"message": "Class name is required found"});
+    if(!req?.body?.class_name) return res.status(400).json( {"message": "Class name is required"});
 
     const found = school.students.filter(item => item.class_name == req.body.class_name);
   
     return res.status(200).json(found);
-
 }
 
 const createNewStudent = async (req, res) => {
@@ -131,6 +130,7 @@ const deleteStudent = async (req, res) => {
 }
 
 const getStudent = async (req, res) => {
+
     if(!req?.body?.student_id) {
         return res.status(400).json({ 'message' : `Student with ID name is required`});
     }
@@ -142,8 +142,17 @@ const getStudent = async (req, res) => {
     const found = school.students.find(element => element.student_id == req.body.student_id);
 
     if(!found) return res.status(404).json({ "message": `Student with ID ${req.body.student_id} does not exists`, "res": "2"});
+
+    // get extra data
+    // const class = await school.Classes.find(element)
    
     res.status(200).json(found);
+}
+
+const getExtraDataStudents = (student) => {
+
+
+
 }
 
 module.exports = {

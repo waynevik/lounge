@@ -406,12 +406,12 @@ const getStudentFees = async (req, res) => {
 }
 
 function getStudentDetails(student, school) {    
-
     let student_id = student.student_id;
     let first_name = student.firstname;
     let last_name = student.lastname;
     let other_name = student.othername;
     let class_name = student.class_name;
+    let date_of_admission = student.date_of_admission;
     let route = "none";
     let feesCharged = 0;
     let feesReceived = 0;
@@ -438,14 +438,17 @@ function getStudentDetails(student, school) {
     });
 
     balance = feesReceived - feesCharged;
+    const name = last_name+" "+first_name+" "+other_name;
     
     const studentFeeData = {
         "student_id": student_id,
+        date_of_admission,
         first_name,
         last_name,
         other_name,
         class_name,
         route,
+        name,
         feesCharged,
         feesReceived,
         balance,
