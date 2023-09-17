@@ -6,7 +6,27 @@ const getAllClasses = async (req, res) => {
     const school_details = await User.findOne( {email: req.email}).exec();
     if(!school_details) return res.status(400).json( {"message": "school_not found"});
     const school = await School.findOne( {_id: school_details.school_id}).exec();
-    res.json(school.classes);
+
+    const classes = school.classes;
+    const actualClasses = [];
+    classes.map((oneClass, index) => {
+        const class_name = oneClass.classname;
+
+        const students =  (school.students.filter((student) => student.class_name == class_name)).length;
+        const oneClassNow =  {
+            classname : oneClass.classname,
+            classlevel : oneClass.classlevel,
+            classdetails: oneClass.classdetails,
+            students: students
+        }
+
+        actualClasses.push(oneClassNow);
+
+
+    });
+
+
+    res.json(actualClasses);
 }
 
 const createNewClass = async (req, res) => {

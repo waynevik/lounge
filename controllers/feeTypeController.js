@@ -1,4 +1,3 @@
-const FeeType = require('../model/FeeType');
 const School = require('../model/School');
 const User = require('../model/User');
 
@@ -34,9 +33,8 @@ const createNewFeeType = async (req, res) => {
         school.feeTypes.push(values );
         const result = await school.save();
 
-        res.status(201).json({"result": result});
+        res.status(201).json({"result": "fee type added"});
     } catch (err) {
-        console.error(err);
         res.status(500).json({"message" : "error"});
     }
 }
@@ -59,7 +57,6 @@ const updateFeeType = async (req, res) => {
     const result = await school.save();
     res.json(result);
 }
-
 
 const getOneFeeType = async (req, res) => {
     if(!req?.params?.id) {

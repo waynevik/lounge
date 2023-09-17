@@ -412,6 +412,17 @@ function getStudentDetails(student, school) {
     let other_name = student.othername;
     let class_name = student.class_name;
     let date_of_admission = student.date_of_admission;
+    let class_level = '';
+    let dob = student.date_of_birth;
+    let gender = student.gender;
+    let date_of_release = student.date_of_release;
+    let guardian_relationship = student.guardian_relationship;
+    let guardian_name = student.guardian_name;
+    let guardian_phone = student.guardian_phone;
+    let guardian_relationship_1 = student.guardian_relationship_1;
+    let guardian_name_1 = student.guardian_name_1;
+    let guardian_phone_1 = student.guardian_phone_1;
+    let status = student.status;
     let route = "none";
     let feesCharged = 0;
     let feesReceived = 0;
@@ -437,16 +448,30 @@ function getStudentDetails(student, school) {
         feesReceived += feeReceived.amount; 
     });
 
+    const classCheck = school.classes.find(element => element.classname == class_name);
+    class_level = classCheck.classlevel;
+
     balance = feesReceived - feesCharged;
     const name = last_name+" "+first_name+" "+other_name;
     
     const studentFeeData = {
         "student_id": student_id,
         date_of_admission,
+        guardian_relationship,
+        guardian_name,
+        guardian_phone,
+        guardian_relationship_1,
+        guardian_name_1,
+        guardian_phone_1,
+        status,
         first_name,
         last_name,
         other_name,
         class_name,
+        class_level,
+        dob,
+        gender,
+        date_of_release,
         route,
         name,
         feesCharged,
