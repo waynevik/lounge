@@ -1,20 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const feeChargeBatchSchema = new Schema({
-    fee_name : {
+const smsSchema = new Schema({
+    message : {
         type: String,
         required: true
     },
-    amount: {
-        type: Number,
+    phone_number: {
+        type: String,
         required: true
     },
-    timestamp: {
-        type: Number,
-        required: true
-    },
-    date_of_charge: {
+    num: {
         type: String,
         required: true
     },
@@ -25,12 +21,7 @@ const feeChargeBatchSchema = new Schema({
     tag_id: {
         type: String,
         required: true
-    },
-    fee_details: {
-        type: String,
-        required: true
     }
-
 },  { timestamps: true });
 
-module.exports = mongoose.model('FeeChargeBatch', feeChargeBatchSchema);
+module.exports = mongoose.model('Sms', smsSchema);

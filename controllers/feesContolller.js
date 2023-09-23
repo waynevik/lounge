@@ -1,5 +1,7 @@
+const FeeReceived = require('../model/FeeReceived');
 const School = require('../model/School');
 const User = require('../model/User');
+'use strict';
 
 const getChargedFees = async (req, res) => {
         
@@ -9,13 +11,45 @@ const getChargedFees = async (req, res) => {
 
     const school = await School.findOne( {_id: school_details.school_id}).exec();
 
-    res.status(200).json({"data": school.feeChargeBatch});
+    res.status(200).json({"data": school.feeChargeBatch, "tag": "feeCharged"} );
+}
+
+const getReceivedFees = async (req, res) => {
+        
+    const school_details = await User.findOne( {email: req.email}).exec();
+    if(!school_details)
+        return res.status(400).json( {"message": "school_not found"});
+
+    const school = await School.findOne( {_id: school_details.school_id}).exec();
+
+    const data = school.feeReceived.map((received) => {
+        const studentCheck =  school.students.find( student => student.student_id == received.student_id);
+        var studentData = {  
+        student_id: received.student_id,
+        amount: received.amount,
+        details: received.details,
+        mode: received.mode,
+        receipt_no: received.receipt_no,
+        date_received: received.date_received,
+        reference_no: received.reference_no,
+        account: received.account,
+        _id: received._id,
+        createdAt: received.createdAt,
+        updatedAt: received.updatedAt,
+        name: `${studentCheck.lastname} ${studentCheck.firstname} ${studentCheck.othername} `
+    };
+        return studentData;
+    });
+
+
+
+    res.status(200).json({"data": data, "tag": "feeReceived"});
 }
 
 const chargeFees = async (req, res) => {
     
     if  (
-            !req?.body.fee_name || !req?.body?.charge_type || !req?.body?.fee_details || !req?.body?.amount 
+            !req?.body.fee_name || !req?.body?.charge_type || !req?.body?.fee_details || !req?.body?.amount || !req?.body.date_of_charge
         )
 
     return res.status(400).json({'message' : 'All data is required!'});
@@ -26,22 +60,22 @@ const chargeFees = async (req, res) => {
 
     const school = await School.findOne( {_id: school_details.school_id}).exec();
 
-    const feeTypeCheck = school.feeTypes.find(element => element.fee_name == req.body.fee_name);
+    // const feeTypeCheck = school.feeTypes.find(element => element.fee_name == req.body.fee_name);
 
-    if(!feeTypeCheck) 
-        return res.status(400).json({ "message": `Fee with name ${req.body.fee_name} does not exists`, "res": "2"});
+    // if(!feeTypeCheck) 
+    //     return res.status(400).json({ "message": `Fee with name ${req.body.fee_name} does not exists`, "res": "2"});
 
     const timestamp = Math.floor(Date.now() / 1000);
 
     if(req.body.charge_type == 1){
-        if(!req?.body.class_name) return res.status(400).json({'message' : 'Class name is required to charge class!'}); 
+        if(!req?.body.charge_id) return res.status(400).json({'message' : 'Class name is required to charge class!'}); 
         // is a class type
-        const classCheck = school.classes.find(element => element.classname == req.body.class_name);
+        const classCheck = school.classes.find(element => element.classname == req.body.charge_id);
 
-        if(!classCheck) return res.status(400).json({ "message": `Class with name ${req.body.class_name} does not exists`, "res": "2"});
+        if(!classCheck) return res.status(400).json({ "message": `Class with name ${req.body.charge_id} does not exists`, "res": "2"});
 
-        const isStudentExist = school.students.filter(student => student.class_name == req.body.class_name);
-        if(isStudentExist.length == 0) return res.status(400).json({ "message": `There are no students in ${req.body.class_name}`, "res": "2"});
+        const isStudentExist = school.students.filter(student => student.class_name == req.body.charge_id);
+        if(isStudentExist.length == 0) return res.status(400).json({ "message": `There are no students in ${req.body.charge_id}`, "res": "2"});
         
     try{ 
 
@@ -51,7 +85,8 @@ const chargeFees = async (req, res) => {
             "amount" : req.body.amount,
             "tag" : "Class",
             "tag_id" : classCheck.classname,
-            "fee_details" : req.body.fee_details
+            "fee_details" : req.body.fee_details,
+            "date_of_charge" : req.body.date_of_charge
           });
           
          await school.save();
@@ -69,7 +104,7 @@ const chargeFees = async (req, res) => {
         });
 
         await school.save();
-        res.status(200).json({ "message": `Class ${req.body.class_name} has been charged successfully.`});
+        res.status(200).json({ "message": `Class ${req.body.charge_id} has been charged successfully.`, "tag": "chargeFee"});
     }
     catch( error){
 
@@ -79,14 +114,14 @@ const chargeFees = async (req, res) => {
     }
     else if(req.body.charge_type == 2){
         // is a route type
-        if(!req?.body.route_name) return res.status(400).json({'message' : 'Route name is required to charge class!'}); 
+        if(!req?.body.charge_id) return res.status(400).json({'message' : 'Route name is required to charge class!'}); 
         // is a class type
-        const routeCheck = school.routes.find(element => element.route_name == req.body.route_name);
+        const routeCheck = school.routes.find(element => element.route_name == req.body.charge_id);
 
-        if(!routeCheck) return res.status(400).json({ "message": `Route with name ${req.body.route_name} does not exists`, "res": "2"});
+        if(!routeCheck) return res.status(400).json({ "message": `Route with name ${req.body.charge_id} does not exists`, "res": "2"});
 
-        const isStudentExist = school.routeStudents.filter(student => student.route_name == req.body.route_name);
-        if(isStudentExist.length == 0) return res.status(400).json({ "message": `There are no students in route ${req.body.route_name}`, "res": "2"});
+        const isStudentExist = school.routeStudents.filter(student => student.route_name == req.body.charge_id);
+        if(isStudentExist.length == 0) return res.status(400).json({ "message": `There are no students in route ${req.body.charge_id}`, "res": "2"});
 
         try{ 
     
@@ -96,7 +131,8 @@ const chargeFees = async (req, res) => {
                 "amount" : req.body.amount,
                 "tag" : "Route",
                 "tag_id" : routeCheck.route_name,
-                "fee_details" : req.body.fee_details
+                "fee_details" : req.body.fee_details,
+                "date_of_charge" : req.body.date_of_charge
               });
               
              await school.save();
@@ -114,7 +150,7 @@ const chargeFees = async (req, res) => {
             });
     
             await school.save();
-            res.status(200).json({ "message": `Fees charged to students in route ${req.body.route_name} succesfully.`});
+            res.status(200).json({ "message": `Fees charged to students in route ${req.body.charge_id} succesfully.`, "tag": "chargeFee"});
         }
         catch( error){
     
@@ -123,10 +159,10 @@ const chargeFees = async (req, res) => {
     }
     else if(req.body.charge_type == 3){
         // is individual type
-        if(!req?.body.student_id) return res.status(400).json({'message' : 'Student ID is required to charge student!'}); 
-        const isStudentExist = school.students.find(student => student.student_id == req.body.student_id);
+        if(!req?.body.charge_id) return res.status(400).json({'message' : 'Student ID is required to charge student!'}); 
+        const isStudentExist = school.students.find(student => student.student_id == req.body.charge_id);
 
-        if(!isStudentExist) return res.status(400).json({ "message": `Student with ID ${req.body.student_id} does not exist.`});
+        if(!isStudentExist) return res.status(400).json({ "message": `Student with ID ${req.body.charge_id} does not exist.`});
 
         try{
     
@@ -136,7 +172,8 @@ const chargeFees = async (req, res) => {
               "amount" : req.body.amount,
               "tag" : "Student",
               "tag_id" : isStudentExist.student_id,
-              "fee_details" : req.body.fee_details
+              "fee_details" : req.body.fee_details,
+              "date_of_charge" : req.body.date_of_charge
             });
             
             await school.save();
@@ -150,18 +187,18 @@ const chargeFees = async (req, res) => {
             school.feeCharge.push( feeCharge );
   
           await school.save();
-          res.status(200).json({ "message": `Fees charged to student of ID  ${req.body.student_id} succesfully.`});
+          res.status(200).json({ "message": `Fees charged to student of ID  ${req.body.charge_id} succesfully.`, "tag": "chargeFee"});
 
         }
         catch( error){
 
-            res.status(400).json({ "message": `error has occured try again later`});
+            res.status(400).json({ "message": `An error has occured try again later ${error}`, "tag": "chargeFee"});
 
         }
 
     }
     else {
-        res.status(400).json({"message": "An error has occured please try again later"});
+        res.status(400).json({"message": "An error has occured please try again later", "tag": "chargeFee"});
     }    
 }
 
@@ -187,7 +224,7 @@ const deleteFeeCharged = async (req, res) => {
            
         });
         await school.save();
-        res.status(200).json({ "message": "Fee charge batch deleted successfully"});
+        res.status(200).json({ "message": "Fee charge batch deleted successfully", "tag": "feeChargedDelete"});
     } catch (error) {
         res.status(400).json({"message": "An error has occured please try again later"});   
     }
@@ -212,10 +249,10 @@ const updateFeeCharged = async (req, res) => {
 
         if (req.body?.fee_name) {
 
-            const feeTypeCheck = school.feeTypes.find(element => element.fee_name == req.body.fee_name);
+            // const feeTypeCheck = school.feeTypes.find(element => element.fee_name == req.body.fee_name);
 
-            if(!feeTypeCheck) 
-                return res.status(400).json({ "message": `Fee with name ${req.body.fee_name} does not exists`, "res": "2"});
+            // if(!feeTypeCheck) 
+            //     return res.status(400).json({ "message": `Fee with name ${req.body.fee_name} does not exists`, "res": "2"});
 
             feeChargeBatch.fee_name = req.body.fee_name;
 
@@ -223,7 +260,7 @@ const updateFeeCharged = async (req, res) => {
         if (req.body?.amount) feeChargeBatch.amount = req.body.amount;
         if (req.body?.fee_details) feeChargeBatch.fee_details = req.body.fee_details;
         await school.save();
-        res.status(200).json({ "message": "Fee charge batch has been edited succesfully successfully"});
+        res.status(200).json({ "message": "Fee charge batch has been edited succesfully successfully", "tag": "editCharge"});
     } catch (error) {
         res.status(400).json({"message": "An error has occured please try again later"});   
     }
@@ -297,7 +334,7 @@ const updateReceivedFee = async (req, res) => {
     if (req.body?.date_received) feeReceivedFound.date_received = req.body.date_received;
    
     await school.save();
-    res.status(200).json({"message": "Receipt information edited succesfully"});
+    res.status(200).json({"message": "Receipt edited.", "tag": "feeReceiveEdit"});
 
 }
 
@@ -317,7 +354,7 @@ const deleteReceiveFee = async (req, res) => {
         school.feeReceived.id(feeReceivedFound._id).deleteOne();
        
         await school.save();
-        res.status(200).json({ "message": "Fee receipt deleted successfully"});
+        res.status(200).json({ "message": "Fee receipt deleted successfully", "tag" : "feeDelete"});
     } catch (error) {
         res.status(400).json({"message": `An error has occured please try again later ${error}`});
     }
@@ -333,6 +370,7 @@ const getStudentFees = async (req, res) => {
     const school = await School.findOne( {_id: school_details.school_id}).exec();
     try {
         const studentFeeObject = [];
+
         if(req.body.tag == 1) {
             // this is to get all students in school
 
@@ -344,7 +382,7 @@ const getStudentFees = async (req, res) => {
 
             });
             
-            return res.status(200).json({ 'message' : 'Success', 'data': studentFeeObject});
+            return res.status(200).json({ 'message' : 'Success', 'data': studentFeeObject, "tag": "studentFees"});
         }
 
         else if(req.body.tag == 2) {
@@ -361,7 +399,7 @@ const getStudentFees = async (req, res) => {
                 var studentData =  getStudentDetails(student, school);
                 studentFeeObject.push(studentData);
             });
-            return res.status(200).json({ 'message' : 'Success', 'data': studentFeeObject});
+            return res.status(200).json({ 'message' : 'Success', 'data': studentFeeObject, "tag": "studentFees"});
         }
 
         else if(req.body.tag == 3) {
@@ -378,7 +416,7 @@ const getStudentFees = async (req, res) => {
                 var studentData =  getStudentDetails(student, school);
                 studentFeeObject.push(studentData);
             });
-            return res.status(200).json({ 'message' : 'Success', 'data': studentFeeObject});
+            return res.status(200).json({ 'message' : 'Success', 'data': studentFeeObject, "tag": "studentFees"});
         }
 
         else if(req.body.tag == 4) {
@@ -393,7 +431,7 @@ const getStudentFees = async (req, res) => {
             var studentData =  getStudentDetails(studentCheck, school);
             studentFeeObject.push(studentData);
 
-            return res.status(200).json({ 'message' : 'Success', 'data': studentFeeObject});
+            return res.status(200).json({ 'message' : 'Success', 'data': studentFeeObject, "tag": "studentFees"});
         }
 
         else {
@@ -453,6 +491,7 @@ function getStudentDetails(student, school) {
 
     balance = feesReceived - feesCharged;
     const name = last_name+" "+first_name+" "+other_name;
+    const route_merge = `${student_id} - ${name}`
     
     const studentFeeData = {
         "student_id": student_id,
@@ -477,10 +516,68 @@ function getStudentDetails(student, school) {
         feesCharged,
         feesReceived,
         balance,
+        route_merge,
         feesChargedArray: feesChargedArrayComplete,
         feesReceivedArray
     };
     return studentFeeData;
+}
+
+const getChargeGroups = async(req, res) =>{
+    const school_details = await User.findOne( {email: req.email}).exec();
+    if(!school_details) return res.status(400).json( {"message": "school_not found"});
+    const school = await School.findOne( {_id: school_details.school_id}).exec();
+    const routes = school.routes;
+    const classes = school.classes;
+    const students = school.students;
+
+    let classesItems =  classes.map((oneClass) => {
+
+        const classDetail = {
+            label: `${oneClass.classname} - ${oneClass.classlevel} `,
+            value: `1,${oneClass.classname}`
+        }
+
+        return classDetail;
+    });
+
+    let routesItems =  routes.map((oneRoute) => {
+
+        const routeDetail = {
+            label: `${oneRoute.route_name} `,
+            value: `2,${oneRoute.route_name}`
+        }
+
+        return routeDetail;
+    });
+
+    let studentsItems = students.map((student) => {
+
+        const studentDetail = {
+            label: `${student.student_id} - ${student.lastname} ${student.firstname} ${student.othername} `,
+            value: `3,${student.student_id}`
+        }
+        return studentDetail;
+    });
+
+    let data = [
+        {
+            label: "Classes",
+            code: "classes",
+            items: classesItems
+          },
+          {
+            label: "Routes",
+            code: "routes",
+            items: routesItems
+          },
+          {
+              label: "Students",
+              code: "students",
+              items: studentsItems
+          }
+    ];
+    res.status(200).json({"tag": "chargedGroups", "data": data});
 }
 
 module.exports = {
@@ -491,5 +588,7 @@ module.exports = {
     receiveFee,
     updateReceivedFee,
     deleteReceiveFee,
-    getStudentFees
+    getStudentFees,
+    getReceivedFees,
+    getChargeGroups
 }

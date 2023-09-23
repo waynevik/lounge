@@ -6,6 +6,7 @@ const FeeType = require('../model/FeeType');
 const RouteStudents = require('../model/RouteStudents');
 const FeeChargeBatch = require('../model/FeeChargeBatch');
 const FeeCharge = require('../model/FeeCharge');
+const Sms = require('../model/Sms');
 
 const ReceiptDetails = require('../model/ReceiptDetails');
 const FeeReceived = require('../model/FeeReceived');
@@ -41,7 +42,8 @@ const schoolSchema = new Schema({
         bought : {
             type: Number,
             default: 0
-        }
+        },
+        sent:[ Sms.schema ]
     },
     feeReceived: [FeeReceived.schema],
     receiptDetails: {

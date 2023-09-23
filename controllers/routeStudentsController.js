@@ -49,11 +49,11 @@ const removeStudentFromRoute = async (req, res) => {
     try {
         school.routeStudents.id(foundStudentInRoute._id).deleteOne();
         await school.save();
-        res.status(200).json({"message": `${req.body.student_id} has been removed from ${foundStudentInRoute.route_name} route successfully`});
+        res.status(200).json({"res": "route_remove", "message": `${req.body.student_id} has been removed from ${foundStudentInRoute.route_name} route successfully`});
     } catch (error) {
         res.status(400).json({"message": "an error has occured try agin later"});   
     }
-}     
+}    
 
 module.exports = {
     addStudentToRoute,

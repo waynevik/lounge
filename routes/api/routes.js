@@ -12,10 +12,13 @@ router.route('/')
     .delete(verifyRoles(ROLES_LIST.Admin), routesController.deleteRoute);
 
 router.route('/one')
-    .get(routesController.getOneRoute);
+    .post(routesController.getOneRoute);
 
 router.route('/students')
     .post(verifyRoles(ROLES_LIST.Admin), routesStudentController.addStudentToRoute)
     .delete(verifyRoles(ROLES_LIST.Admin), routesStudentController.removeStudentFromRoute);
+
+router.route('/students/remove')
+    .post(verifyRoles(ROLES_LIST.Admin), routesStudentController.removeStudentFromRoute);
 
 module.exports =  router;

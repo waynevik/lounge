@@ -112,7 +112,7 @@ const getOneRoute = async (req, res) => {
         return school.students.find(foundStudent => foundStudent.student_id == student.student_id);
     });
    
-    res.status(200).json(routeStudentDetails);
+    res.status(200).json({"res": "routes_students", "data": routeStudentDetails});
 }
 
 module.exports = {

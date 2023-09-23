@@ -3,38 +3,69 @@ const User = require('../model/User');
 const axios = require('axios');
 
 const sendSms = async (req, res) => {
-  if(
-        !req?.body?.data
-    )
-
-  return res.status(400).json({'message' : 'All data is required!'});
+ 
+  try {
+    if(
+      !req?.body?.data ||  !req?.body?.values
+  )
+    return res.status(400).json({'message' : 'All data is required!'});
   const school_details = await User.findOne( {email: req.email}).exec();
   if(!school_details)
       return res.status(400).json( {"message": "school_not found"});
 
   const school = await School.findOne( {_id: school_details.school_id}).exec();
 
-  if(req.body.data.length >= school.messages.balance)
+  if(req.body.values >= school.messages.balance)
   return res.status(400).json({"message": "Not enough messages"});
 
-  school.messages.balance -= req.body.data.length;
-  school.messages.totalSent += req.body.data.length;
+  school.messages.balance -= req.body.values;
+  school.messages.totalSent += req.body.values;
   await school.save();
 
   req.body.data.map( (messageBody, index) => {
 
-      if(!messageBody.message || !messageBody.number)
+      if(!messageBody.message || !messageBody.number || !messageBody.tag || !messageBody.tag_id )
       return;
+      sendSmsToParent(messageBody.number, messageBody.message, school.sms);
+      school.messages.sent.push({
+        message: messageBody.message,
+        phone_number: messageBody.number,
+        num: messageBody.num ,
+        tag: messageBody.tag ,
+        tag_id: messageBody.tag_id 
+      });
 
-      sendSmsToParent(messageBody.number, messageBody.message);
+    });
 
-  });
+    school.save();
 
   res.status(200).json({"message": "messages sent succesfully"});
+
+    } catch (error) {
+      res.status(400).json({"message": "An error has occured "+error});      
+    }
+}
+
+const getSmsSent = async (req, res) => {
+
+  const school_details = await User.findOne( {email: req.email}).exec();
+  if(!school_details)
+      return res.status(400).json( {"message": "school_not found"});
+
+  const school = await School.findOne( {_id: school_details.school_id}).exec();
+  return res.status(200).json({"message": "Success", "tag": "smsSent", "data": school?.messages?.sent});
+
+
 }
 
 
-function sendSmsToParent(phone_number, message){
+function validateMessages(data, values){
+
+}
+
+
+
+function sendSmsToParent(phone_number, message, sender){
     const postData = 
     {
         "data": [
@@ -42,7 +73,7 @@ function sendSmsToParent(phone_number, message){
             "message_bag": {
               "numbers": phone_number,
               "message": message,
-              "sender": "MT_OLIVES"
+              "sender": sender
             }
           }
         ]
@@ -59,4 +90,4 @@ function sendSmsToParent(phone_number, message){
     });
 }
 
-module.exports = {sendSms}; 
+module.exports = {sendSms, getSmsSent}; 
