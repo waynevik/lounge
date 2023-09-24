@@ -14,7 +14,8 @@ const getAllStudents = async (req, res) => {
 
     const found = school.students.filter(item => item.class_name == req.body.class_name);
   
-    return res.status(200).json(found);
+    return res.status(200).json({data: found, "message": "student created succesfully"});
+    // return res.status(200).json(found);
 }
 
 const createNewStudent = async (req, res) => {

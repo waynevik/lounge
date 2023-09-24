@@ -11,6 +11,9 @@ router.route('/')
     .put(verifyRoles(ROLES_LIST.Admin), routesController.updateRoute)
     .delete(verifyRoles(ROLES_LIST.Admin), routesController.deleteRoute);
 
+router.route('/delete')
+    .post(routesController.deleteRoute);
+
 router.route('/one')
     .post(routesController.getOneRoute);
 

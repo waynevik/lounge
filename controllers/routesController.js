@@ -18,7 +18,8 @@ const getAllRoutes = async (req, res) => {
         }
         actualRoutes.push(oneRouteNow);
     });
-    res.json(actualRoutes);
+
+    res.status(200).json({"res": "success", tag: "routesGet", "data": actualRoutes});
 }
 
 const createNewRoute = async (req, res) => {
@@ -46,7 +47,7 @@ const createNewRoute = async (req, res) => {
         school.routes.push(values );
         await school.save();
 
-        res.status(201).json({"res": "success", "routes": school.routes});
+        res.status(200).json({"res": "success", tag: "routesNew"});
 
     } catch (err) {
         console.error(err);
@@ -70,8 +71,8 @@ const updateRoute = async (req, res) => {
 
     found.details = req.body.details;
 
-    const result = await school.save();
-    res.status(200).json({"message": `${req.body.details} route has been edited succesfully.`});
+    await school.save();
+    res.status(200).json({"message": `${req.body.details} route has been edited succesfully.`, tag : "routeEdit"});
 }
 
 const deleteRoute = async (req, res) => {
@@ -88,10 +89,16 @@ const deleteRoute = async (req, res) => {
     try {
         console.log(found);
         school.routes.id(found._id).deleteOne();
+        school.routeStudents.map((value)=> {
+
+            if(value.route_name === req.body.route_name){
+                school.routeStudents.id(value._id).deleteOne();
+            }
+        });
         await school.save();
-        res.status(200).json({"message": `${req.body.route_name} has been deleted successfully`});
+        res.status(200).json({"message": `${req.body.route_name} has been deleted successfully`, tag: "routerDelete"});
     } catch (error) {
-        res.sendStatus(400);   
+        res.status(400).json({"message": `An error has occurred. Try again later`, tag: "routerDeleteError", "error": error});  
     }
 }
 
@@ -112,7 +119,7 @@ const getOneRoute = async (req, res) => {
         return school.students.find(foundStudent => foundStudent.student_id == student.student_id);
     });
    
-    res.status(200).json({"res": "routes_students", "data": routeStudentDetails});
+    res.status(200).json({"res": "routes_students", "data": routeStudentDetails, tag : "routeStudentGet"});
 }
 
 module.exports = {
