@@ -15,7 +15,7 @@ const sendSms = async (req, res) => {
 
   const school = await School.findOne( {_id: school_details.school_id}).exec();
 
-  if(req.body.values >= school.messages.balance)
+  if(req.body.values > school.messages.balance)
   return res.status(400).json({"message": "Not enough messages"});
 
   school.messages.balance -= req.body.values;
@@ -26,23 +26,23 @@ const sendSms = async (req, res) => {
 
       if(!messageBody.message || !messageBody.number || !messageBody.tag || !messageBody.tag_id )
       return;
-      sendSmsToParent(messageBody.number, messageBody.message, school.sms);
-      school.messages.sent.push({
-        message: messageBody.message,
-        phone_number: messageBody.number,
-        num: messageBody.num ,
-        tag: messageBody.tag ,
-        tag_id: messageBody.tag_id 
-      });
+      // sendSmsToParent(messageBody.number, messageBody.message, school.sms);
+      // school.messages.sent.push({
+      //     message: messageBody.message,
+      //     phone_number: messageBody.number,
+      //     num: messageBody.num ,
+      //     tag: messageBody.tag ,
+      //     tag_id: messageBody.tag_id 
+      //   });
 
-    });
+      });
 
     school.save();
 
-  res.status(200).json({"message": "messages sent succesfully"});
+  res.status(200).json({"message": "messages sent succesfully", tag: "smsSent"});
 
     } catch (error) {
-      res.status(400).json({"message": "An error has occured "+error});      
+      res.status(400).json({"message": "An error has occured "});      
     }
 }
 
@@ -53,9 +53,7 @@ const getSmsSent = async (req, res) => {
       return res.status(400).json( {"message": "school_not found"});
 
   const school = await School.findOne( {_id: school_details.school_id}).exec();
-  return res.status(200).json({"message": "Success", "tag": "smsSent", "data": school?.messages?.sent});
-
-
+  return res.status(200).json({"message": "Success", "tag": "smsSent", "data": school?.messages?.sent.reverse()});
 }
 
 

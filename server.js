@@ -37,7 +37,6 @@ app.use('/', require('./routes/root'));
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
 app.use('/refresh', require('./routes/refresh'));
-app.use('/logout', require('./routes/logout'));
 
 // connectSchoolDB();
 app.use(verifyJWT);
@@ -48,6 +47,7 @@ app.use('/fees', require('./routes/api/fees'));
 app.use('/sms', require('./routes/api/sms'));
 app.use('/data', require('./routes/api/data'));
 app.use('/routes', require('./routes/api/routes'));
+app.use('/logout', require('./routes/logout'));
 
 app.all('*' , (req, res) => {
     res.status(404);

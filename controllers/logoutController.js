@@ -1,29 +1,20 @@
 const User = require('../model/User');
+const School = require('../model/School');
 
 const handleLogout = async (req, res) => {
-    //  on Client also delete the access token
+    const school_details = await User.findOne( {email: req.email}).exec();
+    if(!school_details) return res.status(400).json( {"message": "school not found"});
+    const school = await School.findOne( {_id: school_details.school_id}).exec();
 
-    const cookies = req.cookies;
-    console.log("here1");
-    if(!cookies?.jwt) return res.sendStatus(204);  // no content
-    const refreshToken =  cookies.jwt;
-    console.log("here2");
-    // is refresh token in DB?
-    const foundUser = await User.findOne({ refreshToken }).exec();
-
-    if(!foundUser) {
-        res.clearCookie('jwt', {httpOnly: true, sameSite: 'None', secure:truey});
-        return res.sendStatus(204);
-    }  //forbiden
-
-    // delete refresh token in db
-    foundUser.refreshToken = '';
-    const result = await foundUser.save();
-    console.log(result);
-  
-    res.clearCookie('jwt', {httpOnly: true, sameSite: 'None', secure:true}); //secure: true - only serves https
-    res.sendStatus(204);
-       
+    try {
+        school_details.refreshToken = '';
+        await school_details.save();
+        
+        res.clearCookie('jwt', {httpOnly: true, sameSite: 'None', secure:true}); //secure: true - only serves https
+        return res.status(200).json( {"message": "Logout Success", tag: "logout"});
+    } catch (error) {
+        return res.status(400).json( {"message": "Error occured", tag: "logout"});
+    }       
 }
 
 module.exports = { handleLogout }
