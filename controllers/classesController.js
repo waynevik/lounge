@@ -21,12 +21,8 @@ const getAllClasses = async (req, res) => {
         }
 
         actualClasses.push(oneClassNow);
-
-
     });
-
-
-    res.json(actualClasses);
+    return res.status(200).json({ "data": actualClasses, "tag": "classGet"});
 }
 
 const createNewClass = async (req, res) => {
@@ -76,13 +72,12 @@ const updateClass = async (req, res) => {
     const found = school.classes.find(element => element.classname == req.body.classname);
     if(!found) return res.status(400).json({ "message": `class with name ${req.body.classname} does not exists`, "res": "2"});
 
-    console.log(found);
 
     if (req.body?.classlevel) found.classlevel = req.body.classlevel;
     if (req.body?.classdetails) found.classdetails = req.body.classdetails;
 
     const result = await school.save();
-    res.json(result);
+    return res.status(200).json({ "data": [], "tag": "classEdit"});
 }
 
 const deleteClass = async (req, res) => {
@@ -96,13 +91,19 @@ const deleteClass = async (req, res) => {
     const found = school.classes.find(element => element.classname == req.body.classname);
     if(!found) return res.status(400).json({ "message": `class with name ${req.body.classname} does not exists`, "res": "2"});
 
+    const studentsinClass = school.students.find(element => element.class_name == req.body.classname);
+
+    if(studentsinClass){
+        return res.status(400).json({ "message": `Cannot delete a class that has students`, "tag": "classDelete"});
+    }
+
     try {
         console.log(found);
         school.classes.id(found._id).deleteOne();
         await school.save();
-        res.sendStatus(200);
+        return res.status(200).json({ "message": `Class deleted succesfully.`, "tag": "classDelete"});
     } catch (error) {
-        res.sendStatus(400);   
+        return res.status(400).json({ "message": `An error has occured.`, "tag": "classDelete"});  
     }
 
 }
