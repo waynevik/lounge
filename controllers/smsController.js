@@ -26,14 +26,14 @@ const sendSms = async (req, res) => {
 
       if(!messageBody.message || !messageBody.number || !messageBody.tag || !messageBody.tag_id )
       return;
-      // sendSmsToParent(messageBody.number, messageBody.message, school.sms);
-      // school.messages.sent.push({
-      //     message: messageBody.message,
-      //     phone_number: messageBody.number,
-      //     num: messageBody.num ,
-      //     tag: messageBody.tag ,
-      //     tag_id: messageBody.tag_id 
-      //   });
+      sendSmsToParent(messageBody.number, messageBody.message, school.sms);
+      school.messages.sent.push({
+          message: messageBody.message,
+          phone_number: messageBody.number,
+          num: messageBody.num ,
+          tag: messageBody.tag ,
+          tag_id: messageBody.tag_id 
+        });
 
       });
 
