@@ -14,8 +14,8 @@ const getAllStudents = async (req, res) => {
 
     const found = school.students.filter(item => item.class_name == req.body.class_name);
   
-    return res.status(200).json({data: found, "message": "student created succesfully"});
-    // return res.status(200).json(found);
+    // return res.status(200).json({data: found, "message": "student created succesfully"});
+    return res.status(200).json(found);
 }
 
 const createNewStudent = async (req, res) => {
@@ -64,7 +64,7 @@ const createNewStudent = async (req, res) => {
 
     school.students.push( studentDetail );
     await school.save();
-    res.status(201).json({"message": "student created succesfully"});
+    res.status(201).json({"message": "student created succesfully", tag: "studentNew"});
 }
 
 const updateStudent = async (req, res) => {
@@ -86,7 +86,6 @@ const updateStudent = async (req, res) => {
     const found = school.students.find(element => element.student_id == req.body.student_id);
     if(!found) return res.status(400).json({ "message": `students with name ${req.body.student_id} does not exists`, "res": "2"});
 
-
     if (req.body?.class_name) found.class_name = req.body.class_name;
     if (req.body?.firstname) found.firstname = req.body.firstname;
     if (req.body?.lastname) found.lastname = req.body.lastname;
@@ -106,7 +105,7 @@ const updateStudent = async (req, res) => {
     if (req.body?.initiator) found.initiator = req.body.initiator;
 
     const result = await school.save();
-    res.json(result);
+    res.status(200).json({"message": "student edited", tag: "studentEdit"});
 }
 
 const deleteStudent = async (req, res) => {
@@ -123,7 +122,7 @@ const deleteStudent = async (req, res) => {
     try {
         school.students.id(found._id).deleteOne();
         await school.save();
-        res.sendStatus(200);
+        res.status(200).json({"message": "student edited", tag: "studentDelete"});
     } catch (error) {
         res.sendStatus(400);   
     }
@@ -151,8 +150,6 @@ const getStudent = async (req, res) => {
 }
 
 const getExtraDataStudents = (student) => {
-
-
 
 }
 

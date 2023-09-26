@@ -8,7 +8,9 @@ router.route('/')
     .get(verifyRoles(ROLES_LIST.Admin), studentsController.getAllStudents)
     .post(verifyRoles(ROLES_LIST.Admin), studentsController.createNewStudent)
     .put(verifyRoles(ROLES_LIST.Admin), studentsController.updateStudent)
-    .delete(verifyRoles(ROLES_LIST.Admin), studentsController.deleteStudent);
+
+router.route('/delete')
+    .post(studentsController.deleteStudent);
 
 router.route('/one')
     .get(studentsController.getStudent);

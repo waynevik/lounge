@@ -461,10 +461,12 @@ function getStudentDetails(student, school) {
     let guardian_name_1 = student.guardian_name_1;
     let guardian_phone_1 = student.guardian_phone_1;
     let status = student.status;
+    let details = student.details;
     let route = "none";
     let feesCharged = 0;
     let feesReceived = 0;
     let balance = 0;
+    let id = student._id;
 
     let routeStudent = school.routeStudents.find(element => element.student_id == student_id);
     if(routeStudent) {
@@ -494,7 +496,7 @@ function getStudentDetails(student, school) {
     const route_merge = `${student_id} - ${name}`
     
     const studentFeeData = {
-        "student_id": student_id,
+        student_id,
         date_of_admission,
         guardian_relationship,
         guardian_name,
@@ -518,7 +520,9 @@ function getStudentDetails(student, school) {
         balance,
         route_merge,
         feesChargedArray: feesChargedArrayComplete,
-        feesReceivedArray
+        feesReceivedArray,
+        id, 
+        details
     };
     return studentFeeData;
 }
