@@ -12,7 +12,6 @@ router.route('/')
 
 router.route('/delete')
     .post(verifyRoles(ROLES_LIST.Admin), classesController.deleteClass);
-
     
 router.route('/:classname')
     .get(classesController.getClass);

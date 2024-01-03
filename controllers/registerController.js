@@ -24,7 +24,7 @@ const handelNewUser =  async (req, res) => {
         !PWD_REGEX.test(pwd) || 
         !EMAIL_REGEX.test(email)
     )
-    return res.status(400).json( {"message": "One of the input is wrong", "code": "2" });
+    // return res.status(400).json( {"message": "One of the input is wrong", "code": "2" });
 
     try {
         // encrypt password
