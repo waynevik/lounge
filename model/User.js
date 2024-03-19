@@ -14,20 +14,23 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    school_id : {
+    phone_number: {
         type: String,
         required: true
     },
-    roles: {
-        User:{
-            type:Number,
-            default:2001
-        },
-        Editor: Number,
-        Admin:{
-            type:Number,
-            default:6921
-        }
+    team : {
+        type: String,
+        required: false,
+        default: "none"
+    },
+    team_id : {
+        type: String,
+        required: false,
+        default: "none"
+    },
+    role: {
+            type: Number,
+            required: true,
     },
     password : {
         type: String,

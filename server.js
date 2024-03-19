@@ -10,7 +10,7 @@ const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
 const mongoose = require('mongoose');
-const {connectMainDB, connectSchoolDB} = require('./config/dbConn');
+const { connectMainDB } = require('./config/dbConn');
 
 const PORT = process.env.PORT || 4500;
 
@@ -34,19 +34,17 @@ app.use(cookieParser());
 app.use('/' ,express.static(path.join(__dirname, '/public')));
 
 app.use('/', require('./routes/root'));
-app.use('/register', require('./routes/register'));
+// app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
 app.use('/refresh', require('./routes/refresh'));
 
 // connectSchoolDB();
 app.use(verifyJWT);
-app.use('/employees', require('./routes/api/employees'));
-app.use('/classes', require('./routes/api/classes'));
-app.use('/students', require('./routes/api/students'));
-app.use('/fees', require('./routes/api/fees'));
-app.use('/sms', require('./routes/api/sms'));
-app.use('/data', require('./routes/api/data'));
-app.use('/routes', require('./routes/api/routes'));
+app.use('/details', require('./routes/details'));
+app.use('/users', require('./routes/users'));
+app.use('/team', require('./routes/team'));
+app.use('/player', require('./routes/player'));
+
 app.use('/logout', require('./routes/logout'));
 
 app.all('*' , (req, res) => {

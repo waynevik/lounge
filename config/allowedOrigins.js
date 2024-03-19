@@ -1,10 +1,9 @@
 const allowedOrigins = [ 
-    'http:/127.0.0.1:3000', 
+    'http://localhost:5173',
     'http://localhost:3000',
-    'https://academicslounge.co.ke/',
-    'https://portal.academicslounge.co.ke',
-    'https://567teche.academicslounge.co.ke'
+    'http://0.0.0.0',
+    'http://localhost:5000',
+    'https://krlf-415011.web.app'
 ];
-
 
 module.exports = allowedOrigins;

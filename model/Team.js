@@ -1,36 +1,27 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const feeChargeBatchSchema = new Schema({
-    fee_name : {
+const teamSchema = new Schema({
+    name : {
         type: String,
         required: true
     },
-    amount: {
-        type: Number,
-        required: true
-    },
-    timestamp: {
-        type: Number,
-        required: true
-    },
-    date_of_charge: {
+    logo : {
         type: String,
         required: true
     },
-    tag: {
+    teamManager : {
         type: String,
         required: true
     },
-    tag_id: {
+    tm_name: {
         type: String,
         required: true
     },
-    fee_details: {
+    tm_id: {
         type: String,
         required: true
     }
-
 },  { timestamps: true });
 
-module.exports = mongoose.model('FeeChargeBatch', feeChargeBatchSchema);
+module.exports = mongoose.model('Team', teamSchema);
