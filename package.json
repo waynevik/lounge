@@ -1,7 +1,7 @@
 {
-  "name": "krlf_api",
+  "name": "mti_institute",
   "version": "1.0.0",
-  "description": "KRLF Api",
+  "description": "MTI API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -30,10 +30,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/waynevik/lounge.git"
+    "url": "git+https://github.com/waynevik/mti_api.git"
   },
   "bugs": {
-    "url": "https://github.com/waynevik/lounge/issues"
+    "url": "https://github.com/waynevik/mti_api/issues"
   },
-  "homepage": "https://github.com/waynevik/lounge#readme"
+  "homepage": "https://github.com/waynevik/mti_api#readme"
 }
